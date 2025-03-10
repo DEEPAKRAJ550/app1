@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="flash-messages">
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="dashboard-container">
+        <h2>Welcome, <span class="highlight">{{ username }}</span> (Student)</h2>
+        
+        <div class="upload-section">
+            <p>Select a subject and upload your answer sheet (JPG or PDF):</p>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <label for="subject">Select Subject:</label>
+                <select name="subject" id="subject" required>
+                    {% for subject in subjects %}
+                    <option value="{{ subject }}">{{ subject }}</option>
+                    {% endfor %}
+                </select>
+
+                <input type="file" name="answersheet" accept=".jpg, .pdf" required>
+                <button type="submit" class="upload-btn">Upload</button>
+            </form>
+        </div>
+
+        <div class="links">
+            <a href="{{ url_for('view_evaluations') }}" class="btn">View Evaluations</a>
+            <a href="{{ url_for('logout') }}" class="btn logout-btn">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

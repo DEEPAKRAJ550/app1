@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h2>Performance Report</h2>
+     <!-- Flash Messages -->
+     {% with messages = get_flashed_messages(with_categories=true) %}
+     {% if messages %}
+         <div id="flash-messages">
+             {% for category, message in messages %}
+                 <div class="flash-message {{ category }}">{{ message }}</div>
+             {% endfor %}
+         </div>
+     {% endif %}
+ {% endwith %}
+    
+    {% if img_path %}
+        <img src="{{ url_for('static', filename='performance.png') }}" alt="Performance Report">
+    {% else %}
+        <p>No performance data available.</p>
+    {% endif %}
+    
+    <br>
+    {% if session['role'] == 'student' %}
+        <a href="{{ url_for('student_dashboard') }}">Back to Student Dashboard</a>
+    {% elif session['role'] == 'teacher' %}
+        <a href="{{ url_for('teacher_dashboard') }}">Back to Teacher Dashboard</a>
+    {% endif %}
+    <br>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>

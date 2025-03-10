@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluations</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h2>Evaluations</h2>
+    <body>
+        <!-- Flash Messages Section -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div id="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}" style="display: none;">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+    
+    
+
+        {% if evaluations and evaluations|length > 0 %}
+
+        <table border="1">
+            <tr>
+                <th>Filename</th>
+                <th>Subject</th>
+                <th>Similarity Score</th>
+                <th>Grammar Issues</th>
+                <th>Marks</th>
+                {% if session['role'] == 'teacher' %}
+                    <th>Adjust Marks</th>
+                {% endif %}
+            </tr>
+            {% for filename, evaluation in evaluations.items() %}
+            <tr>
+                <td>{{ filename }}</td>
+                <td>{{ evaluation['subject'] }}</td>
+                <td>{{ (evaluation['similarity'] * 100) | round(2) }}%</td>
+                <td>{{ evaluation['grammar_issues'] }}</td>
+                <td>{{ evaluation['marks'] }}</td>
+
+                {% if session['role'] == 'teacher' %}
+                    <td>
+                        <form action="{{ url_for('adjust_marks') }}" method="post">
+                            <input type="hidden" name="filename" value="{{ filename }}">
+                            <input type="number" name="new_marks" min="0" max="10" required>
+                            <button type="submit">Update</button>
+                        </form>
+                    </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p><font color="red">No evaluations available.</font></p>
+    {% endif %}
+
+    <br>
+    {% if session['role'] == 'student' %}
+        <a href="{{ url_for('student_dashboard') }}">Back to Student Dashboard</a>
+    {% elif session['role'] == 'teacher' %}
+        <a href="{{ url_for('teacher_dashboard') }}">Back to Teacher Dashboard</a>
+    {% endif %}
+    <br>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>
